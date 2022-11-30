@@ -483,7 +483,7 @@ if __name__ == '__main__':
     print('res')
     import time
 
-    dm = Matrix(unique=False)
+    dm = Matrix()
     # print(dm.values)
     # print(dm['timestamp'])
 
