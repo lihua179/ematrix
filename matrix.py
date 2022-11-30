@@ -244,7 +244,7 @@ class DataFrame:
 
 
 class Matrix:
-    # 可接收多个pd.DataFrame聚合为xquant.Matrix数据类型
+    # 可接收多个pd.DataFrame聚合为Matrix数据类型
     # 标准样例：第一维度为时间，第二维度为合约标的代码，第三维度为特征因子features
     # 均需要外部提供，标准协议为：
     # axis_name={'timestamp':[xx,xx,xx],
@@ -252,7 +252,7 @@ class Matrix:
     #            'features':[xx,xx,xx],
     #           }
     # 需要解决一个问题：如果两个dataframe的长度不一致时如何解决
-    def __init__(self, data: MatrixGetDataType = None, axis_name: dict = None, unique=True):
+    def __init__(self, data: MatrixGetDataType = None, axis_name: dict = None, unique=False):
         # unique如果能确保值是唯一的，那么可提高性能
         self._dimension_dict = {}
         self.unique = unique
@@ -463,7 +463,7 @@ class Matrix:
         # def __str__(self):
         #   return 像Series一样要对输出作限制，并且像多个DataFrame一样排序输出
 
-        # dm=xquant.Matrix()  == pd.DataFrame()
+        # dm=Matrix()  == pd.DataFrame()
 
     def __str__(self):
         return str(self.values)
@@ -482,38 +482,14 @@ if __name__ == '__main__':
     print('-' * 30)
     print('res')
     import time
-
-    dm = Matrix()
-    # print(dm.values)
-    # print(dm['timestamp'])
-
-    # print(dm['timestamp'] == 200)
-    # print(dm[dm['timestamp'] == 200])
-    # print(dm['features'])
-    # print(dm['features'] == 'high')
-    # print(dm[dm['features'] == 'high'])
-    # 从三维数据中查找轴名为code，元素为000001的矩阵切片
-    axis_name = 'code'  # code timestamp
-    compare_obj = '000001'  # '000001' 200
-    # 打印数据全貌
-    # print(dm)
-    # 某个维度的轴信息
-    # print(dm[axis_name])
-    # 判断符合条件的信息
-    # print(dm[axis_name] == compare_obj)
-    # print(dm[dm[axis_name] == compare_obj])
     t1 = time.time()
-    # print(dm)
-    # 某个维度的轴信息
-    # print(dm[axis_name])
-    # 判断符合条件的信息
-    # print(dm[axis_name] == compare_obj)
-    # 返回判断切片
-    dm_slice = dm[dm[axis_name] == compare_obj]
-    df = dm[dm[axis_name] == compare_obj].to_pandas_df()  # 切片数据转为pd.DataFrame
-
+    dm = Matrix()
+    print(dm.values)
+    print(dm['timestamp'])
+    print(dm['timestamp'] == 200)
+    print(dm[dm['timestamp'] == 200])
+    print(dm['features'])
+    print(dm['features'] == 'high')
+    print(dm[dm['features'] == 'high'])
     t2 = time.time()
-    print('dm_slice',dm_slice)
-    print(type(df))
-    print(df)
     print('slice obj cost time:', t2 - t1)
