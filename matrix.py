@@ -1,12 +1,37 @@
 # -*- coding:utf-8 -*-
-"""
-像pandas DataFrame处理二维表格数据一样
-Matrix类处理三维时间序列数据
-目前没有赋值操作，因为时间序列大多用于读取，而不是修改
-但是有拼接功能，新增的数据是dataframe类型可用matrix.update()或者matrix.append() 如果是matrix类型用matrix3=concat(matrix1,matrix2)
-后续会更新更多功能，用于满足条件查询，定位，切片，矩阵批计算，因子批计算，使用体验同pandas.DataFrame
-"""
 
+"""
+dm = Matrix()
+print('data_matrix:', dm)
+res = dm[dm['code'] == '000001']
+print('data_matrix_slice:\n', res)
+------------------------------
+data_matrix:
+             ['close', 'high', 'low', 'open', 'ret']
+100
+000001  [0.80676805 0.30489957...0.83385824 0.56749199]
+000002  [0.0158474  0.65408549...0.14293321 0.76696439]
+                  ......
+
+200
+000001  [0.62020139 0.96969446...0.76984185 0.14326731]
+000002  [0.82182821 0.10924971...0.9967727  0.51963606]
+                  ......
+                  ......
+400
+...
+000003  [0.15914842 0.99641071...0.15914842 0.99641071]
+Dimension: ['timestamp', 'code', 'features'], Shape: (4, 3, 5), dtype: matrix
+
+data_matrix_slice:
+         close      high       low      open       ret
+100  0.806768  0.304900  0.210918  0.833858  0.567492
+200  0.620201  0.969694  0.754948  0.769842  0.143267
+300  0.008385  0.087556  0.994873  0.706558  0.752703
+400  0.388965  0.946414  0.967339  0.567995  0.071485
+
+
+"""
 import numpy as np
 from typing import Union, NewType
 import pandas as pd
@@ -252,7 +277,7 @@ class Matrix:
     #            'features':[xx,xx,xx],
     #           }
     # 需要解决一个问题：如果两个dataframe的长度不一致时如何解决
-    def __init__(self, data: MatrixGetDataType = None, axis_name: dict = None, unique=False):
+    def __init__(self, data: MatrixGetDataType = None, axis_name: dict = None, unique=True):
         # unique如果能确保值是唯一的，那么可提高性能
         self._dimension_dict = {}
         self.unique = unique
@@ -465,8 +490,55 @@ class Matrix:
 
         # dm=Matrix()  == pd.DataFrame()
 
+    def _print(self):
+
+        _axis_name_list = []
+        _reverse_dimension = {v: k for k, v in self._dimension_dict.items()}
+        columns_str = list(self._axis_name_dict[_reverse_dimension[2]].keys())
+        if len(columns_str) > 10:
+            columns_str = str(columns_str[:5])[:-1] + '...' + str(columns_str[:5])[1:]
+        _print_data = "\n             " + str(columns_str)
+        # for key, value in self._dimension_dict.items():
+        #     print(key,value)
+        # print(_reverse_dimension_dict)
+
+        for i, value in enumerate(self.data):
+            if i >= 2:
+                last_count = list(self._axis_name_dict[_reverse_dimension[0]].keys())[-1]
+                last_row = list(self._axis_name_dict[_reverse_dimension[1]].keys())[-1]
+                last_data = self.data[-1][-1]
+                if len(last_data) >= 5:
+                    last_data = str(last_data[:2])[:-1] + '...' + str(last_data[:2])[1:]
+
+                _print_data += '                  ......\n' + str(last_count) + '\n' + '...\n' + str(
+                    last_row) + '  ' + str(last_data)
+                break
+
+            _p = list(self._axis_name_dict[_reverse_dimension[0]].keys())[i]
+            _print_data += '\n' + str(_p) + '\n'
+            for j in range(len(value)):
+                if j >= 2:
+                    _print_data += '                  ......\n'
+                    break
+
+                _print_data += list(self._axis_name_dict[_reverse_dimension[1]].keys())[j]
+                _value = value[j]
+                # 控制列
+                if len(_value) >= 5:
+                    _value = str(_value[:2])[:-1] + '...' + str(_value[-2:])[1:]
+                _print_data += '  ' + str(_value) + '\n'
+
+        _matrix_info = f'\nDimension: {self._axis_name_key}, Shape: {self.data.shape}, dtype: matrix'
+        _print_data += _matrix_info + '\n'
+        return _print_data
+
+        # _axis_name_list.append((key, value))
+        # for i in range(len(_axis_name_list) - 1, -1, -1):
+        #     print(_axis_name_list[i][0], _axis_name_list[i][1])
+        #     _print_data += str(_axis_name_list[i][1]) + '\n'
+
     def __str__(self):
-        return str(self.values)
+        return self._print()
 
 
 def axis_name_to_range(data_dict):
@@ -482,14 +554,26 @@ if __name__ == '__main__':
     print('-' * 30)
     print('res')
     import time
-    t1 = time.time()
     dm = Matrix()
-    print(dm.values)
-    print(dm['timestamp'])
-    print(dm['timestamp'] == 200)
-    print(dm[dm['timestamp'] == 200])
-    print(dm['features'])
-    print(dm['features'] == 'high')
-    print(dm[dm['features'] == 'high'])
+    # print(dm.values)
+    # print(dm['timestamp'])
+
+    # print(dm['timestamp'] == 200)
+    # print(dm[dm['timestamp'] == 200])
+    # print(dm['features'])
+    # print(dm['features'] == 'high')
+    # print(dm[dm['features'] == 'high'])
+    # 从三维数据中查找轴名为code，元素为000001的矩阵切片
+    axis_name = 'code'  # code timestamp
+    compare_obj = '000001'  # '000001' 200
+    print(dm)
+    print(dm[axis_name])
+    print(dm[axis_name] == compare_obj)
+    print(dm[dm[axis_name] == compare_obj])
+    print('data_matrix:', dm)
+    res = dm[dm[axis_name] == compare_obj]
+    # df = dm[dm[axis_name] == compare_obj].to_pandas_df()  # 切片数据转为pd.DataFrame
+    print('data_matrix_slice:\n', res)
+    t1 = time.time()
     t2 = time.time()
     print('slice obj cost time:', t2 - t1)
