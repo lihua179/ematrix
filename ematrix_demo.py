@@ -50,7 +50,81 @@ print(data1)
 
 data2 = data[data['features'] == 'close']
 print('-' * 30)
+
 print('res5')
 print(data.row)
 t2 = time.time()
 print('cost time:', t2 - t1)
+
+
+"""
+res:
+------------------------------
+res1
+
+             ['ts_code', 'trade_date'...'ts_code', 'trade_date']
+000001_SH
+19901219  ['000001.SH' 19901219...1260.0 494.311]
+19901220  ['000001.SH' 19901220...197.0 84.992]
+                  ......
+
+000009_SH
+19901219  [nan nan...nan nan]
+19901220  [nan nan...nan nan]
+                  ......
+                  ......
+000045_SH
+...
+20221202  ['000045.SH' 20221202...'000045.SH' 20221202]
+Index: code, Row: datetime, Columns: features, Shape: (3, 7808, 11), dtype: matrix
+
+------------------------------
+res2
+
+             ['ts_code', 'trade_date'...'ts_code', 'trade_date']
+19901219
+000001_SH  ['000001.SH' 19901219...1260.0 494.311]
+000009_SH  [nan nan...nan nan]
+                  ......
+
+19901220
+000001_SH  ['000001.SH' 19901220...197.0 84.992]
+000009_SH  [nan nan...nan nan]
+                  ......
+                  ......
+20221202
+...
+000045_SH  ['000045.SH' 20221202...'000045.SH' 20221202]
+Index: datetime, Row: code, Columns: features, Shape: (7808, 3, 11), dtype: matrix
+
+------------------------------
+res3
+            ts_code trade_date      close  ... pct_chg         vol         amount
+19901219        NaN        NaN        NaN  ...     NaN         NaN            NaN
+19901220        NaN        NaN        NaN  ...     NaN         NaN            NaN
+19901221        NaN        NaN        NaN  ...     NaN         NaN            NaN
+19901224        NaN        NaN        NaN  ...     NaN         NaN            NaN
+19901225        NaN        NaN        NaN  ...     NaN         NaN            NaN
+...             ...        ...        ...  ...     ...         ...            ...
+20221128  000045.SH   20221128  4776.5296  ... -0.4633  75751991.0   72706927.098
+20221129  000045.SH   20221129  4846.1718  ...   1.458  96080088.0   92456933.081
+20221130  000045.SH   20221130  4848.9355  ...   0.057  95022109.0   91497170.307
+20221201  000045.SH   20221201   4873.663  ...    0.51  91828167.0  102087677.126
+20221202  000045.SH   20221202  4851.5407  ... -0.4539  72540549.0   80947104.051
+
+[7808 rows x 11 columns]
+------------------------------
+res4
+             ts_code trade_date     close  ... pct_chg        vol       amount
+000001_SH  000001.SH   20021226  1384.152  ... -2.6284  8652099.0  7055430.849
+000009_SH        NaN        NaN       NaN  ...     NaN        NaN          NaN
+000045_SH        NaN        NaN       NaN  ...     NaN        NaN          NaN
+
+[3 rows x 11 columns]
+------------------------------
+res5
+['000001_SH', '000009_SH', '000045_SH']
+cost time: 0.09867095947265625
+
+
+"""
