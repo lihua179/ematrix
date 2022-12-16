@@ -7,8 +7,19 @@
 import pandas as pd
 import os
 
-
-
+"""
+next plan:
+        3. Increase logic operation such as '>= <= > < !=/~ and & or / in' : dm[dm['datetime']>=20220105 and dm['code'] in ['000001','000002']]       √
+        4. Increase more __magic_function__ such as __del__: del dm["feature=='close'"] / dm.delete('datetime<=20220105')       √
+        5. Del dm[dm[::3]:ClassMatrix]      √
+        6. Increase function fill_na: dm.fill_na('forward_value/backward_value/zero_value/avg_value')       √
+        7. Query function: dm.query("20220105<=datetime<=20220506 and code in ['000001','000002'] and feature.capital>float(1e9)")  doing...
+        -1. More simular pd.DataFrame operation function in Matrix
+            * dm.sort(dm['feature']==close,ascend=True) / dm.sort('datetime')
+            * dm.resort_index('datetime') / dm.resort_value('datetime.20220510')
+                _datetime='datetime.20220510'.split('.')[1]
+                it will check dtype of dm.axis_dtype of datetime : data=float(_datetime) if self.axis_dict['datetime'].dtype==float else str(_datetime)
+"""
 def get_df_dict():
     data_list = os.listdir()
     data_list = [data.split('.')[0] for data in data_list if data.endswith('.csv')]
